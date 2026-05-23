@@ -1,0 +1,277 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Luxury black & white cinematic palette */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 4%;
+    --primary: 0 0% 4%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 4%;
+    --radius: 0.25rem;
+
+    /* Brand extensions */
+    --gold: 43 74% 49%;
+    --gold-muted: 43 30% 65%;
+    --cinematic-black: 0 0% 4%;
+    --cinematic-white: 0 0% 98%;
+    --cinematic-gray: 0 0% 55%;
+
+    /* Spacing rhythm */
+    --section-py: clamp(4rem, 10vw, 8rem);
+    --container-px: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 83%;
+    --gold: 43 74% 55%;
+    --gold-muted: 43 25% 45%;
+    --cinematic-black: 0 0% 2%;
+    --cinematic-white: 0 0% 98%;
+    --cinematic-gray: 0 0% 45%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background font-body text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display font-medium tracking-tight;
+  }
+
+  ::selection {
+    @apply bg-primary text-primary-foreground;
+  }
+}
+
+@layer components {
+  /* Editorial container */
+  .container-editorial {
+    @apply mx-auto w-full max-w-content px-[var(--container-px)];
+  }
+
+  /* Luxury glassmorphism */
+  .glass {
+    @apply border border-white/10 bg-white/5 backdrop-blur-glass;
+  }
+
+  .glass-dark {
+    @apply border border-white/5 bg-black/40 backdrop-blur-glass;
+  }
+
+  .glass-card {
+    @apply glass rounded-sm shadow-luxury-sm transition-shadow duration-500 hover:shadow-luxury;
+  }
+
+  /* Cinematic text treatments */
+  .text-gradient-luxury {
+    @apply bg-gradient-to-r from-foreground via-muted-foreground to-foreground bg-clip-text text-transparent;
+  }
+
+  .eyebrow {
+    @apply font-sans text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground;
+  }
+
+  .section-title {
+    @apply font-display text-display-md text-foreground;
+  }
+
+  .section-subtitle {
+    @apply mt-4 max-w-narrow font-body text-lg text-muted-foreground;
+  }
+
+  /* Link underline animation */
+  .link-luxury {
+    @apply relative inline-block text-foreground transition-colors duration-300 hover:text-muted-foreground;
+  }
+
+  .link-luxury::after {
+    @apply absolute bottom-0 left-0 h-px w-0 bg-foreground transition-all duration-500 ease-cinematic content-[''];
+  }
+
+  .link-luxury:hover::after {
+    @apply w-full;
+  }
+
+  /* Image cinematic overlay */
+  .overlay-cinematic {
+    @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent;
+  }
+
+  /* Skeleton shimmer */
+  .skeleton-shimmer {
+    @apply relative overflow-hidden bg-muted;
+  }
+
+  .skeleton-shimmer::after {
+    @apply absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent content-[''];
+  }
+
+  /* Film grain overlay */
+  .grain-overlay {
+    @apply pointer-events-none absolute inset-0 z-[2] opacity-[0.12] mix-blend-overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* B&W → color portfolio reveal */
+  .img-cinematic-bw {
+    @apply grayscale transition-all duration-700 ease-cinematic;
+  }
+
+  .group:hover .img-cinematic-bw,
+  .group:focus-within .img-cinematic-bw {
+    @apply grayscale-0 scale-105;
+  }
+
+  /* Gold accent line */
+  .accent-gold-line {
+    @apply h-px w-12 bg-gold;
+  }
+
+  /* Premium CTA button shine */
+  .btn-luxury-shine {
+    @apply relative overflow-hidden;
+  }
+
+  .btn-luxury-shine::before {
+    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 content-[''];
+  }
+
+  .btn-luxury-shine:hover::before {
+    @apply translate-x-full;
+  }
+
+  /* Floating particles */
+  .particle {
+    @apply absolute rounded-full bg-gold/30;
+    animation: float-particle 8s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  .section-padding {
+    padding-top: var(--section-py);
+    padding-bottom: var(--section-py);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-delay-100 {
+    animation-delay: 100ms;
+  }
+
+  .animate-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animate-delay-300 {
+    animation-delay: 300ms;
+  }
+
+  .animate-delay-500 {
+    animation-delay: 500ms;
+  }
+
+  /* Prevent layout shift for media */
+  .aspect-cinematic {
+    aspect-ratio: 16 / 9;
+  }
+
+  .aspect-portrait {
+    aspect-ratio: 3 / 4;
+  }
+
+  .aspect-editorial {
+    aspect-ratio: 4 / 5;
+  }
+
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+
+  .border-gold {
+    border-color: hsl(var(--gold));
+  }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .testimonial-swiper .swiper-pagination-bullet {
+    @apply bg-white/30 opacity-100;
+  }
+
+  .testimonial-swiper .swiper-pagination-bullet-active {
+    @apply bg-gold;
+  }
+}
+
+@keyframes float-particle {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 0.7;
+  }
+}
