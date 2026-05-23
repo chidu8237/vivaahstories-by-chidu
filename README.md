@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # VivaahStories.ByChidu
 
 > **Every Picture, A Story**
@@ -167,3 +168,6 @@ npx shadcn@latest add [component-name]
 ## License
 
 Private — © VivaahStories.ByChidu
+=======
+# vivaahstories-by-chidu
+>>>>>>> 3d0a0688fea4be1b7150165a964b692aacfebc5c
