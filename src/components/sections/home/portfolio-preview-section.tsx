@@ -1,61 +1,47 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import Link from "next/link";
-
 import { motion } from "framer-motion";
-
 import { Reveal } from "@/components/animations/reveal";
-
 import { CinematicImage } from "@/components/shared/cinematic-image";
-
 import { SectionHeading } from "@/components/shared/typography";
-
 import { SectionWrapper } from "@/components/shared/section-wrapper";
-
 import {
   staggerContainer,
   fadeInUp,
 } from "@/constants/animations";
-
 import { PORTFOLIO_CATEGORIES } from "@/constants/home";
-
 import { cn } from "@/lib/utils";
 
-const spanClasses: Record<
-  string,
-  string
-> = {
+const spanClasses: Record<string, string> = {
   tall: "md:row-span-2",
-
   wide: "md:col-span-2",
-
   default: "",
 };
 
 type DashboardGallery = {
   id: number;
-
   title: string;
-
   category: string;
-
   image: string;
-
   published: boolean;
 };
 
-export function PortfolioPreviewSection() {
-  // =========================================
-  // DASHBOARD DATA
-  // =========================================
+type DashboardCategory = {
+  id: string;
+  title: string;
+  slug: string;
+  image: string;
+  span: "tall" | "wide" | "default";
+};
 
+export function PortfolioPreviewSection() {
   const [
     dashboardCategories,
     setDashboardCategories,
-  ] = useState(
-    PORTFOLIO_CATEGORIES,
+  ] = useState<DashboardCategory[]>(
+    PORTFOLIO_CATEGORIES as DashboardCategory[],
   );
 
   useEffect(() => {
@@ -69,15 +55,13 @@ export function PortfolioPreviewSection() {
     const parsed: DashboardGallery[] =
       JSON.parse(savedGallery);
 
-    // ONLY PUBLISHED
     const publishedImages =
       parsed.filter(
         (img) =>
           img.published === true,
       );
 
-    // CONVERT TO EXISTING UI FORMAT
-    const formatted =
+    const formatted: DashboardCategory[] =
       publishedImages.map(
         (
           img,
@@ -103,7 +87,6 @@ export function PortfolioPreviewSection() {
         }),
       );
 
-    // USE DASHBOARD DATA
     if (formatted.length > 0) {
       setDashboardCategories(
         formatted,
@@ -157,7 +140,6 @@ export function PortfolioPreviewSection() {
                 <div
                   className={cn(
                     "relative overflow-hidden",
-
                     item.span ===
                       "tall"
                       ? "aspect-[3/5] md:min-h-[480px]"
@@ -177,8 +159,7 @@ export function PortfolioPreviewSection() {
 
                   <div className="absolute inset-0 z-[4] flex flex-col justify-end p-6 md:p-8">
                     <span className="eyebrow mb-2 text-white/60 transition-colors group-hover:text-gold">
-                      0
-                      {index + 1}
+                      0{index + 1}
                     </span>
 
                     <h3 className="font-display text-2xl text-white md:text-3xl">
@@ -186,8 +167,7 @@ export function PortfolioPreviewSection() {
                     </h3>
 
                     <span className="mt-3 inline-flex items-center gap-2 font-sans text-xs uppercase tracking-[0.2em] text-white/0 transition-all duration-500 group-hover:text-white/90">
-                      View
-                      Collection
+                      View Collection
 
                       <span className="h-px w-0 bg-gold transition-all duration-500 group-hover:w-8" />
                     </span>

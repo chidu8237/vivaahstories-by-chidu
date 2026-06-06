@@ -30,6 +30,26 @@ export function GalleryGrid({
     setCurrentImage,
   ] = useState(0);
 
+  // SAFE IMAGE HELPER
+  function getImageSrc(
+    image: any,
+  ): string {
+    if (!image)
+      return "/placeholder.jpg";
+
+    if (
+      typeof image === "string"
+    ) {
+      return image;
+    }
+
+    if (image?.src) {
+      return image.src;
+    }
+
+    return "/placeholder.jpg";
+  }
+
   // OPEN
   function openProject(
     project: PortfolioProject,
@@ -48,10 +68,14 @@ export function GalleryGrid({
   function nextImage() {
     if (!selectedProject) return;
 
+    const total =
+      selectedProject.images
+        ?.length || 0;
+
+    if (total === 0) return;
+
     setCurrentImage((prev) =>
-      prev ===
-      selectedProject.images.length -
-        1
+      prev === total - 1
         ? 0
         : prev + 1,
     );
@@ -61,10 +85,15 @@ export function GalleryGrid({
   function prevImage() {
     if (!selectedProject) return;
 
+    const total =
+      selectedProject.images
+        ?.length || 0;
+
+    if (total === 0) return;
+
     setCurrentImage((prev) =>
       prev === 0
-        ? selectedProject.images.length -
-          1
+        ? total - 1
         : prev - 1,
     );
   }
@@ -86,7 +115,9 @@ export function GalleryGrid({
               {/* IMAGE */}
               <div className="relative overflow-hidden">
                 <Image
-                  src={project.coverImage}
+                  src={getImageSrc(
+                    project.coverImage,
+                  )}
                   alt={project.title}
                   width={1400}
                   height={1800}
@@ -118,17 +149,23 @@ export function GalleryGrid({
         ))}
       </div>
 
-      {/* CINEMATIC MODAL */}
+      {/* MODAL */}
       <AnimatePresence>
         {selectedProject && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
             className="fixed inset-0 z-[9999] bg-black"
           >
             {/* BACKGROUND */}
-            <div className="absolute inset-0 bg-black/90 backdrop-blur-xl" />
+            <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" />
 
             {/* CLOSE */}
             <button
@@ -155,7 +192,7 @@ export function GalleryGrid({
             </button>
 
             {/* IMAGE */}
-            <div className="relative flex h-full items-center justify-center p-10">
+            <div className="relative flex h-full items-center justify-center p-4 md:p-10">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentImage}
@@ -176,11 +213,12 @@ export function GalleryGrid({
                   className="relative"
                 >
                   <Image
-                    src={
-                      selectedProject.images[
+                    src={getImageSrc(
+                      selectedProject
+                        .images?.[
                         currentImage
-                      ]
-                    }
+                      ],
+                    )}
                     alt={
                       selectedProject.title
                     }
@@ -190,14 +228,14 @@ export function GalleryGrid({
                   />
 
                   {/* INFO */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent p-8">
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-transparent p-6 md:p-8">
                     <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/60">
                       {
                         selectedProject.category
                       }
                     </p>
 
-                    <h2 className="font-display text-4xl text-white">
+                    <h2 className="font-display text-2xl md:text-4xl text-white">
                       {
                         selectedProject.title
                       }
@@ -205,10 +243,9 @@ export function GalleryGrid({
 
                     <p className="mt-4 text-sm text-white/50">
                       {currentImage + 1} /{" "}
-                      {
-                        selectedProject
-                          .images.length
-                      }
+                      {selectedProject
+                        .images
+                        ?.length || 0}
                     </p>
                   </div>
                 </motion.div>

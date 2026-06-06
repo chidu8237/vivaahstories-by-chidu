@@ -1,6 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+type CookieOptions = {
+  path?: string;
+  domain?: string;
+  maxAge?: number;
+  secure?: boolean;
+  httpOnly?: boolean;
+  sameSite?: "lax" | "strict" | "none";
+};
+
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
@@ -14,7 +23,11 @@ export async function middleware(request: NextRequest) {
             return request.cookies.get(name)?.value;
           },
 
-          set(name: string, value: string, options) {
+          set(
+            name: string,
+            value: string,
+            options: CookieOptions,
+          ) {
             response.cookies.set({
               name,
               value,
@@ -22,7 +35,10 @@ export async function middleware(request: NextRequest) {
             });
           },
 
-          remove(name: string, options) {
+          remove(
+            name: string,
+            options: CookieOptions,
+          ) {
             response.cookies.set({
               name,
               value: "",
@@ -30,10 +46,9 @@ export async function middleware(request: NextRequest) {
             });
           },
         },
-      }
+      },
     );
 
-    // Refresh session safely
     await supabase.auth.getSession();
 
     return response;

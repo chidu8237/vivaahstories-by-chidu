@@ -4,21 +4,13 @@ import { useEffect, useState } from "react";
 
 type GalleryImage = {
   id: number;
-
   title: string;
-
   category: string;
-
   images: string[];
-
   published: boolean;
 };
 
 export default function DashboardPage() {
-  // =========================================
-  // STATES
-  // =========================================
-
   const [galleryImages, setGalleryImages] =
     useState<GalleryImage[]>([]);
 
@@ -41,10 +33,7 @@ export default function DashboardPage() {
       "@vivaahstories.by_chidu",
     );
 
-  // =========================================
-  // LOAD SAVED DATA
-  // =========================================
-
+  // LOAD DATA
   useEffect(() => {
     const savedGallery =
       localStorage.getItem(
@@ -56,12 +45,10 @@ export default function DashboardPage() {
         "websiteSettings",
       );
 
-    // LOAD GALLERY
     if (savedGallery) {
       const parsed =
         JSON.parse(savedGallery);
 
-      // SUPPORT OLD + NEW DATA
       const fixedData =
         parsed.map((img: any) => ({
           ...img,
@@ -76,75 +63,39 @@ export default function DashboardPage() {
 
       setGalleryImages(fixedData);
     } else {
-      // DEFAULT DATA
       setGalleryImages([
         {
           id: 1,
-
-          title:
-            "Wedding Shoot",
-
-          category:
-            "Wedding",
-
+          title: "Wedding Shoot",
+          category: "Wedding",
           images: [
             "https://images.unsplash.com/photo-1519741497674-611481863552",
           ],
-
           published: true,
         },
 
         {
           id: 2,
-
-          title:
-            "Pre Wedding",
-
-          category:
-            "Pre Wedding",
-
+          title: "Pre Wedding",
+          category: "Pre Wedding",
           images: [
             "https://images.unsplash.com/photo-1511285560929-80b456fea0bc",
           ],
-
           published: true,
         },
 
         {
           id: 3,
-
-          title:
-            "Engagement",
-
-          category:
-            "Engagement",
-
+          title: "Engagement",
+          category: "Engagement",
           images: [
             "https://images.unsplash.com/photo-1520854221256-17451cc331bf",
           ],
-
-          published: false,
-        },
-
-        {
-          id: 4,
-
-          title:
-            "Maternity",
-
-          category:
-            "Maternity",
-
-          images: [
-            "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8",
-          ],
-
           published: false,
         },
       ]);
     }
 
-    // LOAD SETTINGS
     if (savedSettings) {
       const settings =
         JSON.parse(savedSettings);
@@ -167,60 +118,30 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // =========================================
-  // SAVE DATA
-  // =========================================
+  // SAVE
+  function saveChanges() {
+    localStorage.setItem(
+      "galleryImages",
+      JSON.stringify(galleryImages),
+    );
 
-  async function saveChanges() {
-    try {
-      localStorage.setItem(
-        "galleryImages",
+    localStorage.setItem(
+      "websiteSettings",
+      JSON.stringify({
+        websiteTitle,
+        tagline,
+        phone,
+        email,
+        instagram,
+      }),
+    );
 
-        JSON.stringify(
-          galleryImages.map(
-            (img) => ({
-              ...img,
-
-              images:
-                img.images
-                  ?.length > 0
-                  ? img.images
-                  : [],
-            }),
-          ),
-        ),
-      );
-
-      localStorage.setItem(
-        "websiteSettings",
-
-        JSON.stringify({
-          websiteTitle,
-
-          tagline,
-
-          phone,
-
-          email,
-
-          instagram,
-        }),
-      );
-
-      alert(
-        "All Changes Saved Successfully!",
-      );
-    } catch (error) {
-      console.error(error);
-
-      alert("Save Failed");
-    }
+    alert(
+      "Changes Saved Successfully!",
+    );
   }
 
-  // =========================================
-  // UPLOAD NEW PROJECTS
-  // =========================================
-
+  // FIXED IMAGE UPLOAD
   function handleImageUpload(
     e: React.ChangeEvent<HTMLInputElement>,
   ) {
@@ -241,66 +162,9 @@ export default function DashboardPage() {
             "Wedding",
 
           images: [
-            async function handleImageUpload(
-              e: React.ChangeEvent<HTMLInputElement>,
-            ) {
-              const files = e.target.files;
-            
-              if (!files) return;
-            
-              const uploadedProjects =
-                await Promise.all(
-                  Array.from(files).map(
-                    async (file) => {
-                      const formData =
-                        new FormData();
-            
-                      formData.append(
-                        "file",
-                        file,
-                      );
-            
-                      const response =
-                        await fetch(
-                          "/api/upload",
-                          {
-                            method: "POST",
-            
-                            body: formData,
-                          },
-                        );
-            
-                      const data =
-                        await response.json();
-            
-                      return {
-                        id:
-                          Date.now() +
-                          Math.random(),
-            
-                        title:
-                          file.name,
-            
-                        category:
-                          "Wedding",
-            
-                        images: [
-                          data.url,
-                        ],
-            
-                        published: false,
-                      };
-                    },
-                  ),
-                );
-            
-              setGalleryImages(
-                (prev) => [
-                  ...prev,
-                  ...uploadedProjects,
-                ],
-              );
-            }
+            URL.createObjectURL(
+              file,
+            ),
           ],
 
           published: false,
@@ -313,10 +177,7 @@ export default function DashboardPage() {
     ]);
   }
 
-  // =========================================
-  // DELETE PROJECT
-  // =========================================
-
+  // DELETE
   function deleteImage(id: number) {
     setGalleryImages((prev) =>
       prev.filter(
@@ -325,10 +186,7 @@ export default function DashboardPage() {
     );
   }
 
-  // =========================================
   // UPDATE TITLE
-  // =========================================
-
   function updateTitle(
     id: number,
     value: string,
@@ -338,7 +196,6 @@ export default function DashboardPage() {
         img.id === id
           ? {
               ...img,
-
               title: value,
             }
           : img,
@@ -346,10 +203,7 @@ export default function DashboardPage() {
     );
   }
 
-  // =========================================
   // UPDATE CATEGORY
-  // =========================================
-
   function updateCategory(
     id: number,
     value: string,
@@ -359,7 +213,6 @@ export default function DashboardPage() {
         img.id === id
           ? {
               ...img,
-
               category: value,
             }
           : img,
@@ -367,10 +220,7 @@ export default function DashboardPage() {
     );
   }
 
-  // =========================================
-  // REPLACE COVER IMAGE
-  // =========================================
-
+  // REPLACE IMAGE
   function replaceImage(
     id: number,
     file: File,
@@ -383,10 +233,8 @@ export default function DashboardPage() {
         img.id === id
           ? {
               ...img,
-
               images: [
                 imageUrl,
-
                 ...img.images.slice(
                   1,
                 ),
@@ -397,10 +245,7 @@ export default function DashboardPage() {
     );
   }
 
-  // =========================================
   // ADD MORE PHOTOS
-  // =========================================
-
   function addMorePhotos(
     id: number,
     files: FileList,
@@ -418,10 +263,8 @@ export default function DashboardPage() {
         img.id === id
           ? {
               ...img,
-
               images: [
                 ...img.images,
-
                 ...newImages,
               ],
             }
@@ -430,17 +273,13 @@ export default function DashboardPage() {
     );
   }
 
-  // =========================================
   // PUBLISH
-  // =========================================
-
   function publishImage(id: number) {
     setGalleryImages((prev) =>
       prev.map((img) =>
         img.id === id
           ? {
               ...img,
-
               published: true,
             }
           : img,
@@ -474,7 +313,7 @@ export default function DashboardPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 md:space-y-10">
-        {/* WEBSITE SETTINGS */}
+        {/* SETTINGS */}
         <section className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 md:p-8">
           <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">
             Website Settings
@@ -490,7 +329,7 @@ export default function DashboardPage() {
                 )
               }
               placeholder="Website Title"
-              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3 text-sm md:text-base"
+              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3"
             />
 
             <input
@@ -502,7 +341,7 @@ export default function DashboardPage() {
                 )
               }
               placeholder="Tagline"
-              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3 text-sm md:text-base"
+              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3"
             />
 
             <input
@@ -514,7 +353,7 @@ export default function DashboardPage() {
                 )
               }
               placeholder="Phone"
-              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3 text-sm md:text-base"
+              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3"
             />
 
             <input
@@ -526,7 +365,7 @@ export default function DashboardPage() {
                 )
               }
               placeholder="Email"
-              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3 text-sm md:text-base"
+              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3"
             />
 
             <input
@@ -538,7 +377,7 @@ export default function DashboardPage() {
                 )
               }
               placeholder="Instagram"
-              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3 text-sm md:text-base md:col-span-2"
+              className="bg-black border border-zinc-700 rounded-2xl px-4 py-3 md:col-span-2"
             />
           </div>
 
@@ -563,63 +402,8 @@ export default function DashboardPage() {
             onChange={
               handleImageUpload
             }
-            className="w-full bg-black border border-zinc-700 rounded-2xl px-4 py-4 text-sm md:text-base"
+            className="w-full bg-black border border-zinc-700 rounded-2xl px-4 py-4"
           />
-        </section>
-
-        {/* STATS */}
-        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 md:p-6">
-            <h3 className="text-zinc-400 text-sm md:text-base">
-              Total Projects
-            </h3>
-
-            <p className="text-3xl md:text-5xl font-bold mt-4">
-              {
-                galleryImages.length
-              }
-            </p>
-          </div>
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 md:p-6">
-            <h3 className="text-zinc-400 text-sm md:text-base">
-              Published
-            </h3>
-
-            <p className="text-3xl md:text-5xl font-bold mt-4">
-              {
-                galleryImages.filter(
-                  (img) =>
-                    img.published,
-                ).length
-              }
-            </p>
-          </div>
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 md:p-6">
-            <h3 className="text-zinc-400 text-sm md:text-base">
-              Drafts
-            </h3>
-
-            <p className="text-3xl md:text-5xl font-bold mt-4">
-              {
-                galleryImages.filter(
-                  (img) =>
-                    !img.published,
-                ).length
-              }
-            </p>
-          </div>
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 md:p-6">
-            <h3 className="text-zinc-400 text-sm md:text-base">
-              Categories
-            </h3>
-
-            <p className="text-3xl md:text-5xl font-bold mt-4">
-              6
-            </p>
-          </div>
         </section>
 
         {/* GALLERY */}
@@ -631,7 +415,7 @@ export default function DashboardPage() {
 
             <button
               onClick={saveChanges}
-              className="bg-white text-black px-6 py-3 rounded-2xl font-semibold hover:opacity-80 transition w-full md:w-auto"
+              className="bg-white text-black px-6 py-3 rounded-2xl font-semibold hover:opacity-80 transition"
             >
               Save All Changes
             </button>
@@ -644,7 +428,6 @@ export default function DashboardPage() {
                   key={item.id}
                   className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden"
                 >
-                  {/* COVER IMAGE */}
                   <img
                     src={
                       item.images?.[0] ||
@@ -655,7 +438,6 @@ export default function DashboardPage() {
                   />
 
                   <div className="p-5 md:p-6 space-y-5">
-                    {/* STATUS */}
                     <div>
                       {item.published ? (
                         <span className="bg-green-600 text-white px-4 py-2 rounded-full text-sm">
@@ -668,137 +450,96 @@ export default function DashboardPage() {
                       )}
                     </div>
 
-                    {/* TITLE */}
-                    <div>
-                      <label className="block text-sm text-zinc-400 mb-2">
-                        Title
-                      </label>
+                    <input
+                      type="text"
+                      value={item.title}
+                      onChange={(e) =>
+                        updateTitle(
+                          item.id,
+                          e.target
+                            .value,
+                        )
+                      }
+                      className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3"
+                    />
 
-                      <input
-                        type="text"
-                        value={
-                          item.title
-                        }
-                        onChange={(
-                          e,
-                        ) =>
-                          updateTitle(
+                    <select
+                      value={
+                        item.category
+                      }
+                      onChange={(e) =>
+                        updateCategory(
+                          item.id,
+                          e.target
+                            .value,
+                        )
+                      }
+                      className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3"
+                    >
+                      <option>
+                        Wedding
+                      </option>
+
+                      <option>
+                        Pre Wedding
+                      </option>
+
+                      <option>
+                        Engagement
+                      </option>
+
+                      <option>
+                        Maternity
+                      </option>
+
+                      <option>
+                        Baby Shower
+                      </option>
+
+                      <option>
+                        Baby Shoot
+                      </option>
+                    </select>
+
+                    {/* REPLACE */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file =
+                          e.target
+                            .files?.[0];
+
+                        if (file) {
+                          replaceImage(
                             item.id,
-                            e.target
-                              .value,
-                          )
+                            file,
+                          );
                         }
-                        className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3 text-sm md:text-base"
-                      />
-                    </div>
-
-                    {/* CATEGORY */}
-                    <div>
-                      <label className="block text-sm text-zinc-400 mb-2">
-                        Category
-                      </label>
-
-                      <select
-                        value={
-                          item.category
-                        }
-                        onChange={(
-                          e,
-                        ) =>
-                          updateCategory(
-                            item.id,
-                            e.target
-                              .value,
-                          )
-                        }
-                        className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3 text-sm md:text-base"
-                      >
-                        <option>
-                          Wedding
-                        </option>
-
-                        <option>
-                          Pre Wedding
-                        </option>
-
-                        <option>
-                          Engagement
-                        </option>
-
-                        <option>
-                          Maternity
-                        </option>
-
-                        <option>
-                          Baby Shower
-                        </option>
-
-                        <option>
-                          Baby Shoot
-                        </option>
-                      </select>
-                    </div>
-
-                    {/* REPLACE COVER */}
-                    <div>
-                      <label className="block text-sm text-zinc-400 mb-2">
-                        Replace Cover
-                        Image
-                      </label>
-
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(
-                          e,
-                        ) => {
-                          const file =
-                            e.target
-                              .files?.[0];
-
-                          if (file) {
-                            replaceImage(
-                              item.id,
-                              file,
-                            );
-                          }
-                        }}
-                        className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3 text-sm md:text-base"
-                      />
-                    </div>
+                      }}
+                      className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3"
+                    />
 
                     {/* ADD MORE */}
-                    <div>
-                      <label className="block text-sm text-zinc-400 mb-2">
-                        Add More
-                        Photos
-                      </label>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => {
+                        const files =
+                          e.target
+                            .files;
 
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={(
-                          e,
-                        ) => {
-                          const files =
-                            e.target
-                              .files;
+                        if (files) {
+                          addMorePhotos(
+                            item.id,
+                            files,
+                          );
+                        }
+                      }}
+                      className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3"
+                    />
 
-                          if (
-                            files
-                          ) {
-                            addMorePhotos(
-                              item.id,
-                              files,
-                            );
-                          }
-                        }}
-                        className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-3 text-sm md:text-base"
-                      />
-                    </div>
-
-                    {/* PHOTO COUNT */}
                     <div className="text-sm text-zinc-400">
                       Total Photos:{" "}
                       {
@@ -807,8 +548,7 @@ export default function DashboardPage() {
                       }
                     </div>
 
-                    {/* BUTTONS */}
-                    <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-2">
+                    <div className="flex flex-col sm:flex-row gap-3">
                       {!item.published && (
                         <button
                           onClick={() =>
@@ -816,7 +556,7 @@ export default function DashboardPage() {
                               item.id,
                             )
                           }
-                          className="bg-white text-black px-4 py-3 rounded-xl text-sm font-semibold hover:opacity-80 transition"
+                          className="bg-white text-black px-4 py-3 rounded-xl text-sm font-semibold"
                         >
                           Publish
                         </button>
@@ -826,7 +566,7 @@ export default function DashboardPage() {
                         onClick={
                           saveChanges
                         }
-                        className="border border-zinc-700 px-4 py-3 rounded-xl text-sm hover:bg-zinc-800 transition"
+                        className="border border-zinc-700 px-4 py-3 rounded-xl text-sm"
                       >
                         Save
                       </button>
@@ -837,7 +577,7 @@ export default function DashboardPage() {
                             item.id,
                           )
                         }
-                        className="border border-red-700 text-red-400 px-4 py-3 rounded-xl text-sm hover:bg-red-900/20 transition"
+                        className="border border-red-700 text-red-400 px-4 py-3 rounded-xl text-sm"
                       >
                         Delete
                       </button>
